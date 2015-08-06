@@ -1,0 +1,16 @@
+'context-menu':
+  'atom-workspace': [{
+    label: 'Format JavaScript'
+    command: 'jsfmt:execute'
+  }]
+
+'menu': [{
+  'label': 'Packages'
+  'submenu': [
+    'label': 'jsfmt'
+    'submenu': [{
+      label: 'Format JavaScript',
+      command: 'jsfmt:execute'
+    }]
+  ]
+}]
