@@ -3,15 +3,15 @@
 import jsfmt from 'jsfmt';
 
 export let config = {
-  executeOnSave: {
-    title: 'Execute on save',
+  formatOnSave: {
+    title: 'Format on Save',
     description: 'Execute formatting JavaScript on save.',
     type: 'boolean',
     default: false
   }
 };
 
-const executeOnSave = () => atom.config.get('jsfmt.executeOnSave');
+const formatOnSave = () => atom.config.get('jsfmt.formatOnSave');
 
 const execute = () => {
 
@@ -30,9 +30,9 @@ const execute = () => {
   if (selectedText.length !== 0) {
     try {
       if (grammer === 'javascript') {
-         formatted = jsfmt.format(selectedText, config)
+         formatted = jsfmt.format(selectedText, config);
       } else if (grammer === 'json') {
-         formatted = jsfmt.formatJSON(selectedText, config)
+         formatted = jsfmt.formatJSON(selectedText, config);
       } else {
         return;
       }
@@ -64,7 +64,7 @@ export const activate = (state) => {
 
   editorObserver = atom.workspace.observeTextEditors((editor) => {
     editor.getBuffer().onWillSave(() => {
-      if (executeOnSave()) {
+      if (formatOnSave()) {
         execute();
       }
     });

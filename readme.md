@@ -2,7 +2,7 @@
 
 Format your JavaScript and JSON using [jsfmt](https://github.com/rdio/jsfmt).
 
-![](jsfmt.gif)
+![atom-jsfmt demo](https://raw.githubusercontent.com/1000ch/atom-jsfmt/master/jsfmt.gif)
 
 ## Installation
 
