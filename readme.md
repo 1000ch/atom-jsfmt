@@ -10,7 +10,7 @@ $ apm install jsfmt
 
 ## Usage
 
-- Press ctrl + alt + c
+- Press ctrl + alt + f
 - Packages > jsfmt > Format JavaScript
 - Right Click > Format JavaScript
 
