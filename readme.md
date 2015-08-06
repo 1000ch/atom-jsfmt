@@ -2,6 +2,8 @@
 
 Format your JavaScript and JSON using [jsfmt](https://github.com/rdio/jsfmt).
 
+![](jsfmt.gif)
+
 ## Installation
 
 ```bash
