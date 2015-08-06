@@ -15,8 +15,6 @@ const executeOnSave = () => atom.config.get('jsfmt.executeOnSave');
 
 const execute = () => {
 
-  console.log('execute');
-
   const editor = atom.workspace.getActiveTextEditor();
 
   if (!editor) {

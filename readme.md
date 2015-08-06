@@ -1,6 +1,6 @@
 # [atom-jsfmt](https://atom.io/packages/jsfmt)
 
-Format your JavaScript using [jsfmt](https://github.com/rdio/jsfmt).
+Format your JavaScript and JSON using [jsfmt](https://github.com/rdio/jsfmt).
 
 ## Installation
 
@@ -10,7 +10,7 @@ $ apm install jsfmt
 
 ## Usage
 
-- Press ctrl + alt + f
+- Press <kbd>ctrl</kbd> + <kbd>alt</kbd> + <kbd>f</kbd>
 - Packages > jsfmt > Format JavaScript
 - Right Click > Format JavaScript
 
