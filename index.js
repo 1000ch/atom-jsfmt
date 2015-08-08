@@ -17,9 +17,9 @@ const format = (text, syntax) => {
 
   try {
     let config = jsfmt.getConfig();
-    if (grammer === 'javascript') {
+    if (syntax === 'javascript') {
       return jsfmt.format(text, config);
-    } else if (grammer === 'json') {
+    } else if (syntax === 'json') {
       return jsfmt.formatJSON(text, config);
     }
   } catch (e) {
