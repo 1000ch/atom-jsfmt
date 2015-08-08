@@ -13,6 +13,22 @@ export let config = {
 
 const formatOnSave = () => atom.config.get('jsfmt.formatOnSave');
 
+const format = (text, syntax) => {
+
+  try {
+    let config = jsfmt.getConfig();
+    if (grammer === 'javascript') {
+      return jsfmt.format(text, config);
+    } else if (grammer === 'json') {
+      return jsfmt.formatJSON(text, config);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return null;
+};
+
 const execute = () => {
 
   const editor = atom.workspace.getActiveTextEditor();
@@ -23,34 +39,21 @@ const execute = () => {
 
   let text = editor.getText();
   let selectedText = editor.getSelectedText();
-  let formatted = '';
   let grammer = editor.getGrammar().name.toLowerCase();
-  let config = jsfmt.getConfig();
 
   if (selectedText.length !== 0) {
-    try {
-      if (grammer === 'javascript') {
-         formatted = jsfmt.format(selectedText, config);
-      } else if (grammer === 'json') {
-         formatted = jsfmt.formatJSON(selectedText, config);
-      } else {
-        return;
-      }
-
-      editor.setTextInBufferRange(editor.getSelectedBufferRange(), formatted);
-    } catch (e) {}
+    let formatted = format(selectedText, grammer);
+    if (formatted) {
+      editor.setTextInBufferRange(
+        editor.getSelectedBufferRange(),
+        formatted
+      );
+    }
   } else {
-    try {
-      if (grammer === 'javascript') {
-         formatted = jsfmt.format(text, config)
-      } else if (grammer === 'json') {
-         formatted = jsfmt.formatJSON(text, config)
-      } else {
-        return;
-      }
-
+    let formatted = format(text, grammer);
+    if (formatted) {
       editor.setText(formatted);
-    } catch (e) {}
+    }
   }
 };
 
