@@ -37,6 +37,7 @@ const execute = () => {
     return;
   }
 
+  let position = editor.getCursorBufferPosition();
   let text = editor.getText();
   let selectedText = editor.getSelectedText();
   let grammer = editor.getGrammar().name.toLowerCase();
@@ -55,6 +56,8 @@ const execute = () => {
       editor.setText(formatted);
     }
   }
+
+  editor.setCursorBufferPosition(position);
 };
 
 let editorObserver = null;
