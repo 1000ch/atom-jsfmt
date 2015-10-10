@@ -1,11 +1,16 @@
 'use babel';
 
+import fs from 'fs';
 import jsfmt from 'jsfmt';
+
+const directory = atom.project.getDirectories().shift();
+const configPath = directory ? directory.resolve('.jsfmtrc') : '';
+const userConfig = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath)) : null;
 
 export let config = {
   formatOnSave: {
     title: 'Format on Save',
-    description: 'Execute formatting JavaScript on save.',
+    description: 'Format JavaScript on Save.',
     type: 'boolean',
     default: false
   }
@@ -16,11 +21,10 @@ const formatOnSave = () => atom.config.get('jsfmt.formatOnSave');
 const format = (text, syntax) => {
 
   try {
-    let config = jsfmt.getConfig();
     if (syntax === 'javascript') {
-      return jsfmt.format(text, config);
+      return jsfmt.format(text, userConfig);
     } else if (syntax === 'json') {
-      return jsfmt.formatJSON(text, config);
+      return jsfmt.formatJSON(text, userConfig);
     }
   } catch (e) {
     console.error(e);
