@@ -49,10 +49,8 @@ const execute = () => {
   if (selectedText.length !== 0) {
     let formatted = format(selectedText, grammer);
     if (formatted) {
-      editor.setTextInBufferRange(
-        editor.getSelectedBufferRange(),
-        formatted
-      );
+      let range = editor.getSelectedBufferRange()
+      editor.setTextInBufferRange(range, formatted);
     }
   } else {
     let formatted = format(text, grammer);
