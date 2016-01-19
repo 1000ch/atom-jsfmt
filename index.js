@@ -1,13 +1,9 @@
 'use babel';
 
-import fs from 'fs';
+import * as path from 'path';
 import jsfmt from 'jsfmt';
 
-const directory = atom.project.getDirectories().shift();
-const configPath = directory ? directory.resolve('.jsfmtrc') : '';
-const userConfig = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath)) : null;
-
-export let config = {
+export const config = {
   formatOnSave: {
     title: 'Format on Save',
     description: 'Format JavaScript on Save.',
@@ -16,25 +12,20 @@ export let config = {
   }
 };
 
-const formatOnSave = () => atom.config.get('jsfmt.formatOnSave');
-
-const format = (text, syntax) => {
-
+function format(text, syntax, config) {
   try {
     if (syntax === 'javascript') {
-      return jsfmt.format(text, userConfig);
+      return jsfmt.format(text, config);
     } else if (syntax === 'json') {
-      return jsfmt.formatJSON(text, userConfig);
+      return jsfmt.formatJSON(text, config);
     }
   } catch (e) {
     console.error(e);
   }
-
   return null;
-};
+}
 
-const execute = () => {
-
+function execute() {
   const editor = atom.workspace.getActiveTextEditor();
 
   if (!editor) {
@@ -42,43 +33,58 @@ const execute = () => {
   }
 
   let position = editor.getCursorBufferPosition();
+  let filePath = editor.getPath();
   let text = editor.getText();
   let selectedText = editor.getSelectedText();
   let grammer = editor.getGrammar().name.toLowerCase();
 
-  if (selectedText.length !== 0) {
-    let formatted = format(selectedText, grammer);
-    if (formatted) {
-      let range = editor.getSelectedBufferRange()
-      editor.setTextInBufferRange(range, formatted);
+  cosmiconfig('jsfmt', {
+    cwd: path.dirname(filePath)
+  }).then(result => {
+    let config = {};
+
+    if (result) {
+      config = result.config;
     }
-  } else {
-    let formatted = format(text, grammer);
-    if (formatted) {
-      editor.setText(formatted);
+
+    if (selectedText.length !== 0) {
+      let formatted = format(selectedText, grammer, config);
+      if (formatted) {
+        let range = editor.getSelectedBufferRange();
+        editor.setTextInBufferRange(range, formatted);
+        editor.setCursorBufferPosition(position);
+      }
+    } else {
+      let formatted = format(text, grammer, config);
+      if (formatted) {
+        editor.setText(formatted);
+        editor.setCursorBufferPosition(position);
+      }
     }
-  }
+  });
+}
 
-  editor.setCursorBufferPosition(position);
-};
+let editorObserver;
+let formatOnSave;
 
-let editorObserver = null;
-
-export const activate = (state) => {
-
+export function activate(state) {
   atom.commands.add('atom-workspace', 'jsfmt:execute', () => {
     execute();
   });
 
-  editorObserver = atom.workspace.observeTextEditors((editor) => {
+  editorObserver = atom.workspace.observeTextEditors(editor => {
     editor.getBuffer().onWillSave(() => {
-      if (formatOnSave()) {
+      if (formatOnSave) {
         execute();
       }
     });
   });
-};
 
-export const deactivate = () => {
+  formatOnSave = () => atom.config.get('jsfmt.formatOnSave');
+
+  atom.config.observe('jsfmt.formatOnSave', value => formatOnSave = value);
+}
+
+export function deactivate() {
   editorObserver.dispose();
-};
+}
