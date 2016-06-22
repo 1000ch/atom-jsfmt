@@ -1,7 +1,9 @@
 'use babel';
 
-import * as path from 'path';
-import jsfmt from 'jsfmt';
+import { normalize, join } from 'path';
+import { spawn } from 'child_process';
+
+const JSFMT_PATH = normalize(join(__dirname, 'node_modules', '.bin', 'jsfmt'));
 
 export const config = {
   formatOnSave: {
@@ -12,19 +14,6 @@ export const config = {
   }
 };
 
-function format(text, syntax, config) {
-  try {
-    if (syntax === 'javascript') {
-      return jsfmt.format(text, config);
-    } else if (syntax === 'json') {
-      return jsfmt.formatJSON(text, config);
-    }
-  } catch (e) {
-    console.error(e);
-  }
-  return null;
-}
-
 function execute() {
   const editor = atom.workspace.getActiveTextEditor();
 
@@ -34,33 +23,27 @@ function execute() {
 
   let position = editor.getCursorBufferPosition();
   let filePath = editor.getPath();
-  let text = editor.getText();
-  let selectedText = editor.getSelectedText();
   let grammer = editor.getGrammar().name.toLowerCase();
 
-  cosmiconfig('jsfmt', {
-    cwd: path.dirname(filePath)
-  }).then(result => {
-    let config = {};
+  let args = [filePath];
+  if (grammer === 'json') {
+    args.push('--json');
+  }
 
-    if (result) {
-      config = result.config;
-    }
+  let chunks = [];
+  let cp = spawn(JSFMT_PATH, args);
+  cp.stdout.on('data', chunk => {
+    chunks.push(chunk);
+  });
 
-    if (selectedText.length !== 0) {
-      let formatted = format(selectedText, grammer, config);
-      if (formatted) {
-        let range = editor.getSelectedBufferRange();
-        editor.setTextInBufferRange(range, formatted);
-        editor.setCursorBufferPosition(position);
-      }
-    } else {
-      let formatted = format(text, grammer, config);
-      if (formatted) {
-        editor.setText(formatted);
-        editor.setCursorBufferPosition(position);
-      }
-    }
+  cp.on('error', error => {
+    console.error(error);
+  });
+
+  cp.on('exit', () => {
+    let position = editor.getCursorBufferPosition();
+    editor.setText(Buffer.concat(chunks).toString());
+    editor.setCursorBufferPosition(position);
   });
 }
 
@@ -80,9 +63,11 @@ export function activate(state) {
     });
   });
 
-  formatOnSave = () => atom.config.get('jsfmt.formatOnSave');
+  formatOnSave = atom.config.get('jsfmt.formatOnSave');
 
-  atom.config.observe('jsfmt.formatOnSave', value => formatOnSave = value);
+  atom.config.observe('jsfmt.formatOnSave', value => {
+    formatOnSave = value;
+  });
 }
 
 export function deactivate() {
