@@ -1,6 +1,8 @@
-# [atom-jsfmt](https://atom.io/packages/jsfmt) [![Dependency Status](https://david-dm.org/1000ch/atom-jsfmt.svg)](https://david-dm.org/1000ch/atom-jsfmt)
+# [atom-jsfmt](https://atom.io/packages/jsfmt)
 
 Format your JavaScript and JSON using [jsfmt](https://github.com/rdio/jsfmt).
+
+[![Dependency Status](https://david-dm.org/1000ch/atom-jsfmt.svg)](https://david-dm.org/1000ch/atom-jsfmt)
 
 ![atom-jsfmt demo](https://raw.githubusercontent.com/1000ch/atom-jsfmt/master/jsfmt.gif)
 
