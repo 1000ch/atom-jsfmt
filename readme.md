@@ -14,7 +14,6 @@ $ apm install jsfmt
 
 ## Usage
 
-- Press <kbd>ctrl</kbd> + <kbd>alt</kbd> + <kbd>f</kbd>
 - Packages > jsfmt > Format JavaScript
 - Right Click > Format JavaScript
 
