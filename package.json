@@ -8,6 +8,14 @@
       "jsfmt:execute"
     ]
   },
+  "configSchema": {
+    "formatOnSave": {
+      "title": "Format on Save",
+      "description": "Format JavaScript on Save.",
+      "type": "boolean",
+      "default": false
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/1000ch/atom-jsfmt.git"

@@ -5,15 +5,6 @@ import { spawn } from 'child_process';
 
 const JSFMT_PATH = normalize(join(__dirname, 'node_modules', '.bin', 'jsfmt'));
 
-export const config = {
-  formatOnSave: {
-    title: 'Format on Save',
-    description: 'Format JavaScript on Save.',
-    type: 'boolean',
-    default: false
-  }
-};
-
 function execute() {
   const editor = atom.workspace.getActiveTextEditor();
 
