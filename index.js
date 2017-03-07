@@ -13,7 +13,7 @@ let subscriptions;
 let editorObserver;
 let formatOnSave;
 
-export function activate(state) {
+export function activate() {
   subscriptions = new CompositeDisposable();
   subscriptions.add(atom.config.observe('jsfmt.formatOnSave', value => formatOnSave = value));
 
