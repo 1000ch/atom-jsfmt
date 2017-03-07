@@ -1,10 +1,13 @@
 'use babel';
 
-import { normalize, join } from 'path';
-import { spawn } from 'child_process';
 import { CompositeDisposable } from 'atom';
+import { type } from 'os';
+import { normalize, join } from 'path';
+import execa from 'execa';
 
-const JSFMT_PATH = normalize(join(__dirname, 'node_modules', '.bin', 'jsfmt'));
+const unix = normalize(join(__dirname, 'node_modules', '.bin', 'jsfmt'));
+const win = normalize(join(__dirname, 'node_modules', '.bin', 'jsfmt.cmd'));
+const jsfmt = type() === 'Windows_NT' ? win : unix;
 
 let subscriptions;
 let editorObserver;
@@ -39,38 +42,18 @@ function execute() {
     return;
   }
 
-  let position = editor.getCursorBufferPosition();
-  let filePath = editor.getPath();
-  let grammer = editor.getGrammar().name.toLowerCase();
+  const grammer = editor.getGrammar().name.toLowerCase();
+  const args = grammer === 'json' ? ['--json'] : [];
+  const buffer = Buffer.from(editor.getText());
 
-  let args = [filePath];
-  if (grammer === 'json') {
-    args.push('--json');
-  }
-
-  let chunks = [];
-  let errors = [];
-
-  let cp = spawn(JSFMT_PATH, args);
-  cp.stdout.on('data', chunk => {
-    chunks.push(chunk);
-  });
-
-  cp.stderr.on('data', error => {
-    errors.push(error);
-  });
-
-  cp.on('error', error => {
-    atom.notifications.addError(error, {});
-  });
-
-  cp.on('exit', code => {
-    if (code === 2) {
-      atom.notifications.addError(Buffer.concat(errors).toString(), {});
-    } else {
-      let position = editor.getCursorBufferPosition();
-      editor.setText(Buffer.concat(chunks).toString());
-      editor.setCursorBufferPosition(position);
-    }
+  execa.stdout(jsfmt, args, {
+    encoding: null,
+    input: buffer
+  }).then(stdout => {
+    const position = editor.getCursorBufferPosition();
+    editor.setText(stdout.toString());
+    editor.setCursorBufferPosition(position);
+  }).catch(error => {
+    atom.notifications.addError(error.toString(), {});
   });
 }
